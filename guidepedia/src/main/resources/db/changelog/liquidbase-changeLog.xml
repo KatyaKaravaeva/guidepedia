@@ -1,0 +1,98 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="category-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS category (
+            categoryId SERIAL PRIMARY KEY,
+            category_name VARCHAR(225) NOT NULL
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="default-category-creation" author="dayana">
+        <sql>
+            INSERT INTO category (categoryId, category_name) VALUES(1, 'category1');
+            INSERT INTO category (categoryId, category_name) VALUES(2, 'category2');
+        </sql>
+    </changeSet>
+    <changeSet id="user-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS users (
+            userId SERIAL PRIMARY KEY,
+            login VARCHAR(225) NOT NULL UNIQUE,
+            password_hash VARCHAR(225) NOT NULL UNIQUE,
+            username VARCHAR(225) NOT NULL,
+            avatar VARCHAR(225),
+            profile TEXT,
+            card_details VARCHAR(225),
+            status BOOLEAN NOT NULL,
+            user_role VARCHAR(50) NOT NULL,
+            created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW()
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="article-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS article (
+            articleId SERIAL PRIMARY KEY,
+            createdBy INTEGER NOT NULL,
+            categoryId INTEGER NOT NULL,
+            title VARCHAR(225) NOT NULL,
+            text TEXT,
+            profile TEXT,
+            created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW(),
+            updated_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL,
+            status BOOLEAN NOT NULL,
+            FOREIGN KEY (createdBy) REFERENCES users(userId),
+            FOREIGN KEY (categoryId) REFERENCES category(categoryId)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="reaction-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS reaction (
+            articleId INTEGER NOT NULL,
+            userId INTEGER NOT NULL,
+            reaction BOOLEAN,
+            FOREIGN KEY (userId) REFERENCES users(userId),
+            FOREIGN KEY (articleId) REFERENCES article(articleId)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="subscription-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS user_request_course (
+            subscriberId INTEGER NOT NULL,
+            publisherId INTEGER NOT NULL,
+            status BOOLEAN NOT NULL,
+            created_at TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW(),
+            FOREIGN KEY (subscriberId) REFERENCES users(userId),
+            FOREIGN KEY (publisherId) REFERENCES users(userId)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="saved-article-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS saved_article (
+            userId INTEGER NOT NULL,
+            articleId INTEGER NOT NULL,
+            status BOOLEAN NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(userId),
+            FOREIGN KEY (articleId) REFERENCES article(articleId)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="comment-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS comment (
+            articleId INTEGER NOT NULL,
+            userId INTEGER NOT NULL,
+            comment TEXT NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(userId),
+            FOREIGN KEY (articleId) REFERENCES article(articleId)
+            )
+        </sql>
+    </changeSet>
+</databaseChangeLog>

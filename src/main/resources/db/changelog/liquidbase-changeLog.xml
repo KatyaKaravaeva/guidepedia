@@ -1,0 +1,116 @@
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+        http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.1.xsd">
+    <changeSet id="category-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS category (
+            id SERIAL PRIMARY KEY,
+            categoryName VARCHAR(225) NOT NULL
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="default-category-creation" author="dayana">
+        <sql>
+            INSERT INTO category (id, categoryName) VALUES(1, 'Путешествия');
+            INSERT INTO category (id, categoryName) VALUES(2, 'Питание');
+            INSERT INTO category (id, categoryName) VALUES(3, 'Учеба');
+            INSERT INTO category (id, categoryName) VALUES(4, 'Работа');
+            INSERT INTO category (id, categoryName) VALUES(5, 'IT сфера');
+            INSERT INTO category (id, categoryName) VALUES(6, 'Литературоведение');
+            INSERT INTO category (id, categoryName) VALUES(7, 'Вероисповедание');
+            INSERT INTO category (id, categoryName) VALUES(8, 'Естественные науки');
+            INSERT INTO category (id, categoryName) VALUES(9, 'Психология');
+            INSERT INTO category (id, categoryName) VALUES(10, 'Медицина');
+            INSERT INTO category (id, categoryName) VALUES(11, 'Остальное');
+        </sql>
+    </changeSet>
+    <changeSet id="user-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS users (
+            id SERIAL PRIMARY KEY,
+            login VARCHAR(225) NOT NULL UNIQUE,
+            passwordHash VARCHAR(225) NOT NULL UNIQUE,
+            username VARCHAR(225) NOT NULL,
+            avatar VARCHAR(225),
+            profile TEXT,
+            cardDetails VARCHAR(225),
+            status BOOLEAN NOT NULL,
+            userRole VARCHAR(50) NOT NULL,
+            createdAt TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW()
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="refresh-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS refresh (
+            id SERIAL PRIMARY KEY,
+            userId INTEGER,
+            token TEXT,
+            expiryDate TEXT,
+            FOREIGN KEY (userId) REFERENCES users(id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="article-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS article (
+            id SERIAL PRIMARY KEY,
+            createdBy INTEGER NOT NULL,
+            categoryId INTEGER,
+            title VARCHAR(225) NOT NULL,
+            text TEXT,
+            description TEXT,
+            image TEXT,
+            createdAt TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NOW(),
+            updatedAt TIMESTAMP(0) WITHOUT TIME ZONE DEFAULT NULL,
+            draft BOOLEAN,
+            FOREIGN KEY (createdBy) REFERENCES users(id),
+            FOREIGN KEY (categoryId) REFERENCES category(id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="reaction-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS reaction (
+            articleId INTEGER NOT NULL,
+            userId INTEGER NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id),
+            FOREIGN KEY (articleId) REFERENCES article(id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="subscription-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS subscribtion (
+            subscriberId INTEGER NOT NULL,
+            publisherId INTEGER NOT NULL,
+            FOREIGN KEY (subscriberId) REFERENCES users(id),
+            FOREIGN KEY (publisherId) REFERENCES users(id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="saved-article-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS saved_article (
+            userId INTEGER NOT NULL,
+            articleId INTEGER NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id),
+            FOREIGN KEY (articleId) REFERENCES article(id)
+            )
+        </sql>
+    </changeSet>
+    <changeSet id="comment-table-creation" author="dayana">
+        <sql>
+            CREATE TABLE IF NOT EXISTS comment (
+            id SERIAL PRIMARY KEY,
+            articleId INTEGER NOT NULL,
+            userId INTEGER NOT NULL,
+            comment TEXT NOT NULL,
+            FOREIGN KEY (userId) REFERENCES users(id),
+            FOREIGN KEY (articleId) REFERENCES article(id)
+            )
+        </sql>
+    </changeSet>
+</databaseChangeLog>
