@@ -78,9 +78,11 @@ public class ArticleService {
     }
 
     public List<ArticleResponse> getUserArticles(UserDetailsImpl user, Long userId) {
+        // UserEntity userEntity = userRepository.findById(userId)
+        //       .orElseThrow(() -> new MyEntityNotFoundException(userId));
+        //UserEntity userEntity = userService.getUser(user);
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new MyEntityNotFoundException(userId));
-        //UserEntity userEntity = userService.getUser(user);
         ArticleResponse articleResponse = new ArticleResponse();
         return articleResponse.getListArticleResponces(articleRepository.findAllByCreatedByOrderByCreatedAtDesc(userEntity), userEntity);
     }

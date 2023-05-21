@@ -33,7 +33,7 @@
             login VARCHAR(225) NOT NULL UNIQUE,
             passwordHash VARCHAR(225) NOT NULL UNIQUE,
             username VARCHAR(225) NOT NULL,
-            avatar VARCHAR(225),
+            avatar TEXT,
             profile TEXT,
             cardDetails VARCHAR(225),
             status BOOLEAN NOT NULL,
